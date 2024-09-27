@@ -1,13 +1,14 @@
+from typing import List
 from langchain.tools import tool
 
 
 @tool("final_answer")
 def final_answer(
     introduction: str,
-    research_steps: str,
+    research_steps: List[str],
     main_body: str,
     conclusion: str,
-    sources: str,
+    sources: List[str],
 ):
     """Returns a natural language response to the user in the form of a research
     report. There are several sections to this report, those are:
