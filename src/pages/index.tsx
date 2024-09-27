@@ -19,10 +19,13 @@ const Home: NextPage = () => {
     }
 
     const handleUpdate = async (prompt: string) => {
-        setWaiting(true);
+        setWaiting(true)
 
         try {
-            const response = await axios.post("/api/chat", {message: prompt});
+            const response = await axios.post('/api/chat', {
+                message: prompt,
+                chat_history: chatItems,
+            })
             setChatItems([
                 ...chatItems,
                 {
@@ -33,13 +36,13 @@ const Home: NextPage = () => {
                     content: response.data,
                     author: 'AI',
                 },
-            ]);
+            ])
         } catch (error) {
-            console.error(error);
+            console.error(error)
         }
 
-        setWaiting(false);
-        scrollToBottom();
+        setWaiting(false)
+        scrollToBottom()
     }
 
     const handleReset = () => {

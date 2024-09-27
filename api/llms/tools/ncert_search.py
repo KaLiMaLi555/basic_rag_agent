@@ -25,7 +25,6 @@ def fetch_sound_ncert(query: str) -> str:
     results = chroma_db.similarity_search(query, k=10)
     if not results:
         return "No results found"
-    print(results)
     return "\n---\n".join(
         [
             "\n".join(["Title: Ncert document", res.page_content])

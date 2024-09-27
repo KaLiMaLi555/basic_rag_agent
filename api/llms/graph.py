@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Optional
 
 from langchain.tools import BaseTool
+from langchain_core.messages import HumanMessage, AIMessage
 from langgraph.graph import END, StateGraph
 
 from .agent import Agent, AgentState
@@ -38,9 +39,16 @@ class LLMGraph:
         print("Router invalid format")
         return "final_answer"
 
-    def invoke(self, query: str, chat_history: Optional[List[str]] = None):
+    def invoke(self, query: str, chat_history: Optional[List[Any]] = None):
         if chat_history is None:
             chat_history = []
+        for i in range(len(chat_history)):
+            message = chat_history[i]
+            author = message.author
+            if author == "User":
+                chat_history[i] = HumanMessage(content=message.content)
+            elif author == "AI":
+                chat_history[i] = AIMessage(content=message.content)
         result = self.graph.invoke(
             {"input": query, "chat_history": chat_history}
         )

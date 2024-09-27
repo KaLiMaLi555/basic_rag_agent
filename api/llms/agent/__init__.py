@@ -96,7 +96,10 @@ class Agent:
             )
             return {"intermediate_steps": [action_out]}
         tool_usage[tool_name] = tool_usage.get(tool_name, 0) + 1
-        print(f"{tool_name}.invoke(input={tool_args})")
+        if tool_name != "final_answer":
+            print(f"{tool_name}.invoke(input={tool_args})")
+        else:
+            print(f"{tool_name}.invoke(input=OUTPUT)")
         # run tool
         tool_output = self.tool_str_to_func[tool_name].invoke(input=tool_args)
         action_out = AgentAction(

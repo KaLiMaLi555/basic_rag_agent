@@ -3,6 +3,7 @@ API for chatting with the llm
 """
 
 import logging
+from typing import List, Literal
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
@@ -28,8 +29,14 @@ def status():
     return {"message": "API is running"}
 
 
+class Message(BaseModel):
+    author: Literal["User", "AI"]
+    content: str
+
+
 class ChatMessage(BaseModel):
     message: str
+    chat_history: List[Message]
 
 
 # TODO: Add chat history
@@ -39,6 +46,7 @@ def chat(request: ChatMessage):
     Returns the response from the chatbot
     """
     query = request.message
-    result = graph.invoke(query, chat_history=[])
+    chat_history = request.chat_history
+    result = graph.invoke(query, chat_history=chat_history)
     response = build_report(result)
     return response
