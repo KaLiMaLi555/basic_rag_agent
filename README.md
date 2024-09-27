@@ -13,10 +13,10 @@
 - Setup dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 ## Run the app
 
 ```bash
-npm run dev
+pnpm run dev
 ```
