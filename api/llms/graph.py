@@ -58,9 +58,15 @@ class LLMGraph:
 def build_report(results: dict):
     output = results["intermediate_steps"][-1].tool_input
     research_steps = output["research_steps"]
+    if len(research_steps) == 0:
+        return output["conclusion"]
     if type(research_steps) is list:
         research_steps = "\n".join([f"- {r}" for r in research_steps])
     sources = output["sources"]
+    for steps in results["intermediate_steps"]:
+        if steps.tool == "fetch_sound_ncert":
+            sources.append("Ncert sound chapter")
+            break
     if type(sources) is list:
         sources = "\n".join([f"- {s}" for s in sources])
     return f"""

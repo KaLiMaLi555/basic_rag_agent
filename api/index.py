@@ -17,7 +17,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-graph = LLMGraph(tools)
 app = FastAPI()
 
 
@@ -47,6 +46,7 @@ def chat(request: ChatMessage):
     """
     query = request.message
     chat_history = request.chat_history
+    graph = LLMGraph(tools)
     result = graph.invoke(query, chat_history=chat_history)
     response = build_report(result)
     return response
