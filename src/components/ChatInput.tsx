@@ -9,7 +9,7 @@ type Props = {
 
 export const ChatInput = ({ onUpdate, onReset, waiting }: Props) => {
     const [prompt, setPrompt] = useState<string>('')
-    const [rows, setRows] = useState<number>(2)
+    const [rows, setRows] = useState<number>(5)
 
     useEffect(() => {
         const lines = prompt.split(/\r*\n/).length
@@ -22,12 +22,12 @@ export const ChatInput = ({ onUpdate, onReset, waiting }: Props) => {
     }
 
     return (
-        <div className="border-t-2 border-t-purple-800 bg-gray-900 py-2">
+        <div className="border-t-black-900 bg-gray-800 py-5">
             <div className="container mx-auto ">
                 <div className=" flex">
                     <textarea
                         className={clsx(
-                            'w-full rounded-md bg-black p-2 text-white',
+                            'w-full rounded-md bg-black p-4 text-white',
                             {
                                 'opacity-50': waiting,
                             }

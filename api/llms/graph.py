@@ -1,8 +1,9 @@
 from typing import Any, Dict, List, Optional
 
-from agent import Agent, AgentState
 from langchain.tools import BaseTool
 from langgraph.graph import END, StateGraph
+
+from .agent import Agent, AgentState
 
 
 class LLMGraph:
@@ -55,23 +56,23 @@ def build_report(results: dict):
     if type(sources) is list:
         sources = "\n".join([f"- {s}" for s in sources])
     return f"""
-INTRODUCTION
+**INTRODUCTION**
 ------------
-{output["introduction"]}
+{output["introduction"]}\n\n
 
-RESEARCH STEPS
+**RESEARCH STEPS**
 --------------
-{research_steps}
+{research_steps}\n\n
 
-REPORT
+**REPORT**
 ------
-{output["main_body"]}
+{output["main_body"]}\n\n
 
-CONCLUSION
+**CONCLUSION**
 ----------
-{output["conclusion"]}
+{output["conclusion"]}\n\n
 
-SOURCES
+**SOURCES**
 -------
 {sources}
 """
