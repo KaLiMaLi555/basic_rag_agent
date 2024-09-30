@@ -13,16 +13,20 @@
 
 - Install dependencies
 
-### Frontend
-Uses react and next.js frontend
+1. Frontend
 ```bash
+# Uses react and next.js frontend
+cd rag-assignment
 pnpm install
 ```
-### Backend
-Uses fastapi backend
+2. Backend
 ```bash
+# Uses fastapi backend
+
+cd rag-assignment
 python3 -m venv .venv
 source .venv/bin/activate
+pip3 install -r requirements.txt
 ```
 - Setup env variables
 
@@ -40,7 +44,7 @@ cd rag-assignment
 source .venv/bin/activate
 python3 api/setup_dbs.py
 ```
-This may take time depending on the specs of the host machine. But after completion, you can find two folders `data/ncert_persist` and `data/arxiv_persist`.
+This may take time depending on the specs of the host machine. But after completion, you can find two folders `data/ncert_persist` and `data/arxiv_persist`.<br><br>
 Alternatively, you can download the two folders from this [Link](https://drive.google.com/drive/folders/1lBvwbpuWS2LbLzY18ndD4VAOTCekSNY1?usp=sharing)
 
 ----
@@ -60,4 +64,4 @@ pnpm run fastapi-dev
 ---
 ## Langraph Agent Vizualization
 
-![[Assets/rag_assignment_graph_viz.png]]
+![Agent Flow Viz](Assets/rag_assignment_graph_viz.png)
