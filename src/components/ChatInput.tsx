@@ -1,13 +1,15 @@
 import clsx from 'clsx'
 import { useEffect, useState } from 'react'
+import ToggleSwitch from './ToggleSwitch'
 
 type Props = {
     onUpdate: (prompt: string) => void
     onReset: () => void
     waiting: boolean
+    onToggle: () => void
 }
 
-export const ChatInput = ({ onUpdate, onReset, waiting }: Props) => {
+export const ChatInput = ({ onUpdate, onReset, waiting, onToggle }: Props) => {
     const [prompt, setPrompt] = useState<string>('')
     const [rows, setRows] = useState<number>(5)
 
@@ -57,38 +59,43 @@ export const ChatInput = ({ onUpdate, onReset, waiting }: Props) => {
                     >
                         Reset
                     </button>
-                    <button
-                        className={clsx(
-                            'inline-flex items-center rounded-md bg-purple-800 px-4 py-2 text-white',
-                            {
-                                'opacity-50': waiting,
-                            }
-                        )}
-                        onClick={handleUpdate}
-                        disabled={waiting}
-                    >
-                        {waiting && (
-                            <svg
-                                className="mr-2 h-4 w-4 animate-spin"
-                                viewBox="0 0 28 28"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M14 26C7.37258 26 2 20.6274 2 14C2 7.37258 7.37258 2 14 2"
-                                    stroke="white"
-                                    stroke-width="4"
-                                />
-                                <path
-                                    d="M14 26C20.6274 26 26 20.6274 26 14C26 7.37258 20.6274 2 14 2C7.37258 2 2 7.37258 2 14C2 20.6274 7.37258 26 14 26Z"
-                                    stroke="white"
-                                    stroke-opacity="0.3"
-                                    stroke-width="4"
-                                />
-                            </svg>
-                        )}
-                        Send
-                    </button>
+                    <div className="my-2 flex items-center justify-between">
+                        <span>
+                            <ToggleSwitch label=' ' onToggle={onToggle} />
+                        </span>
+                        <button
+                            className={clsx(
+                                'inline-flex items-center rounded-md bg-purple-800 px-4 py-2 text-white',
+                                {
+                                    'opacity-50': waiting,
+                                }
+                            )}
+                            onClick={handleUpdate}
+                            disabled={waiting}
+                        >
+                            {waiting && (
+                                <svg
+                                    className="mr-2 h-4 w-4 animate-spin"
+                                    viewBox="0 0 28 28"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M14 26C7.37258 26 2 20.6274 2 14C2 7.37258 7.37258 2 14 2"
+                                        stroke="white"
+                                        strokeWidth="4"
+                                    />
+                                    <path
+                                        d="M14 26C20.6274 26 26 20.6274 26 14C26 7.37258 20.6274 2 14 2C7.37258 2 2 7.37258 2 14C2 20.6274 7.37258 26 14 26Z"
+                                        stroke="white"
+                                        strokeOpacity="0.3"
+                                        strokeWidth="4"
+                                    />
+                                </svg>
+                            )}
+                            Send
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

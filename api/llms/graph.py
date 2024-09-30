@@ -1,10 +1,33 @@
 from typing import Any, Dict, List, Optional
 
 from langchain.tools import BaseTool
-from langchain_core.messages import HumanMessage, AIMessage
+from langchain_core.messages import AIMessage, HumanMessage
 from langgraph.graph import END, StateGraph
 
 from .agent import Agent, AgentState
+from .sarwam_api import get_speech
+
+REPORT_TEMPLATE = """
+**INTRODUCTION**
+------------
+{introduction}\n\n
+
+**RESEARCH STEPS**
+--------------
+{research_steps}\n\n
+
+**REPORT**
+------
+{main_body}\n\n
+
+**CONCLUSION**
+----------
+{conclusion}\n\n
+
+**SOURCES**
+-------
+{sources}
+"""
 
 
 class LLMGraph:
@@ -24,9 +47,10 @@ class LLMGraph:
             path=self.router,
         )
         for tool_obj in self.tools:
-            if tool_obj.name != "final_answer":
+            if tool_obj.name not in ("final_answer", "miscellaneous_chat"):
                 graph.add_edge(tool_obj.name, "oracle")
         graph.add_edge("final_answer", END)
+        graph.add_edge("miscellaneous_chat", END)
         compiled_graph = graph.compile()
         return compiled_graph
 
@@ -55,38 +79,36 @@ class LLMGraph:
         return result
 
 
-def build_report(results: dict):
+def build_report(
+    results: dict, text_to_speech: bool = False, sarwam_api_key: str = ""
+):
+    last_tool = results["intermediate_steps"][-1].tool
+    if last_tool == "miscellaneous_chat":
+        results = results["intermediate_steps"][-1].tool_input
+        speech = None
+        if text_to_speech:
+            speech = get_speech(results["answer"], sarwam_api_key)
+        return (results["answer"], speech)
+
     output = results["intermediate_steps"][-1].tool_input
     research_steps = output["research_steps"]
-    if len(research_steps) == 0:
-        return output["conclusion"]
-    if type(research_steps) is list:
+    if isinstance(research_steps, list):
         research_steps = "\n".join([f"- {r}" for r in research_steps])
     sources = output["sources"]
     for steps in results["intermediate_steps"]:
         if steps.tool == "fetch_sound_ncert":
             sources.append("Ncert sound chapter")
             break
-    if type(sources) is list:
+    if isinstance(sources, list):
         sources = "\n".join([f"- {s}" for s in sources])
-    return f"""
-**INTRODUCTION**
-------------
-{output["introduction"]}\n\n
-
-**RESEARCH STEPS**
---------------
-{research_steps}\n\n
-
-**REPORT**
-------
-{output["main_body"]}\n\n
-
-**CONCLUSION**
-----------
-{output["conclusion"]}\n\n
-
-**SOURCES**
--------
-{sources}
-"""
+    report = REPORT_TEMPLATE.format(
+        introduction=output["introduction"],
+        research_steps=research_steps,
+        main_body=output["main_body"],
+        conclusion=output["conclusion"],
+        sources=sources,
+    )
+    speech = None
+    if text_to_speech:
+        speech = get_speech(output["conclusion"], sarwam_api_key)
+    return (report, speech)

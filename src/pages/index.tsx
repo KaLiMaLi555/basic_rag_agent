@@ -9,6 +9,7 @@ import axios from 'axios'
 const Home: NextPage = () => {
     const [chatItems, setChatItems] = useState<ChatItem[]>([])
     const [waiting, setWaiting] = useState<boolean>(false)
+    const [useTexttoSpeech, setUseTexttoSpeech] = useState<boolean>(false)
     const scrollToRef = useRef<HTMLDivElement>(null)
 
     const scrollToBottom = () => {
@@ -25,6 +26,7 @@ const Home: NextPage = () => {
             const response = await axios.post('/api/chat', {
                 message: prompt,
                 chat_history: chatItems,
+                text_to_speech: useTexttoSpeech,
             })
             setChatItems([
                 ...chatItems,
@@ -33,10 +35,14 @@ const Home: NextPage = () => {
                     author: 'User',
                 },
                 {
-                    content: response.data,
+                    content: response.data.answer,
                     author: 'AI',
                 },
             ])
+            if (useTexttoSpeech) {
+                const audio = new Audio('./' + response.data.speech)
+                await audio.play()
+            }
         } catch (error) {
             console.error(error)
         }
@@ -47,6 +53,10 @@ const Home: NextPage = () => {
 
     const handleReset = () => {
         setChatItems([])
+    }
+
+    const handleUseTexttoSpeech = () => {
+        setUseTexttoSpeech(!useTexttoSpeech)
     }
 
     return (
@@ -71,6 +81,7 @@ const Home: NextPage = () => {
                         onUpdate={handleUpdate}
                         onReset={handleReset}
                         waiting={waiting}
+                        onToggle={handleUseTexttoSpeech}
                     />
                 </section>
             </div>

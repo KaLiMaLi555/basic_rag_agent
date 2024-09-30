@@ -8,9 +8,8 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import Runnable
 from langchain_google_genai import ChatGoogleGenerativeAI
 
-SYSTEM_PROMPT = """You are the oracle, the great AI decision maker.
+SYSTEM_PROMPT = """You are the oracle, the great AI assistant and decision maker.
 Your objective is to process the user's query by deciding the best tool to use from the list provided.
-If the query is pertaining to sound or AI, answer the query and go to the final_answer.
 
 Tool Usage Management:
 - Avoid calling any tool with the same input more than twice.
@@ -89,18 +88,19 @@ class Agent:
         tool_name = state["intermediate_steps"][-1].tool
         tool_args = state["intermediate_steps"][-1].tool_input
         tool_usage = state["tool_usage"]
-        if tool_usage.get(tool_name, 0) >= 2:
-            action_out = AgentAction(
-                tool=tool_name,
-                tool_input=tool_args,
-                log="Tool Usage Exceeded, try some other tools",
-            )
-            return {"intermediate_steps": [action_out]}
-        tool_usage[tool_name] = tool_usage.get(tool_name, 0) + 1
         if tool_name != "final_answer":
             print(f"{tool_name}.invoke(input={tool_args})")
         else:
             print(f"{tool_name}.invoke(input=OUTPUT)")
+        if tool_usage.get(tool_name, 0) >= 2:
+            action_out = AgentAction(
+                tool=tool_name,
+                tool_input=tool_args,
+                log=f"{tool_name} cannot be used anymore, try some other tools",
+            )
+            print(f"Tool Usage {tool_name} Exceeded, try some other tools")
+            return {"intermediate_steps": [action_out]}
+        tool_usage[tool_name] = tool_usage.get(tool_name, 0) + 1
         # run tool
         tool_output = self.tool_str_to_func[tool_name].invoke(input=tool_args)
         action_out = AgentAction(
@@ -118,13 +118,3 @@ class Agent:
             tool=tool_name, tool_input=tool_args, log="TBD"
         )
         return {"intermediate_steps": [action_out]}
-
-
-# SYSTEM_PROMPT = """You are the oracle, the great AI decision maker.
-# Given the user's query you must decide what to do with it based on the
-# list of tools provided to you.
-#
-# Monitor tool usage in the scratchpad. DO NOT USE ANY TOOL MORE THAN TWICE.
-# DO NOT CALL ANY TOOL WITH THE SAME INPUT MORE THAN TWICE.
-#
-# Run final_answer when done."""
