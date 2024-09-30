@@ -64,5 +64,5 @@ def chat(request: ChatMessage) -> ChatResponse:
     results, speech = build_report(
         result, text_to_speech=text_to_speech, sarwam_api_key=SARWAM_API_KEY
     )
-    response = ChatResponse(report=results, speech=speech)
+    response = ChatResponse(answer=results, speech=speech)
     return response
