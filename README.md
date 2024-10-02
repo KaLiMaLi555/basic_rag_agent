@@ -6,6 +6,11 @@
 - Arxiv database Search
 - Google Search
 
+You can ask questions like 
+- `What is sound?`
+- `Tell me more about the paper "Attention is all you need"`
+- `What is 1 + 1?`
+
 ---
 ## How to install
 
